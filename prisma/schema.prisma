@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Curso {
+  id        Int       @id @default(autoincrement())
+  titulo    String
+  descricao String
+  unidades  Unidade[]
+}
+
+model Unidade {
+  id        Int       @id @default(autoincrement())
+  titulo    String
+  descricao String
+  links     String[]  // Array de URLs
+  anexos    String[]  // Array de caminhos ou URLs de arquivos
+  curso     Curso     @relation(fields: [cursoId], references: [id])
+  cursoId   Int
+  atividades Atividade[]
+}
+
+model Atividade {
+  id         Int       @id @default(autoincrement())
+  titulo     String
+  descricao  String
+  unidade    Unidade   @relation(fields: [unidadeId], references: [id])
+  unidadeId  Int
+  resultados ResultadoAtividade[]
+}
+
+model ResultadoAtividade {
+  id           Int      @id @default(autoincrement())
+  atividade    Atividade @relation(fields: [atividadeId], references: [id])
+  atividadeId  Int
+  aluno_id     String
+  resposta     String
+  data_envio   DateTime @default(now())
+}
